@@ -1,3 +1,104 @@
+## Finchat — Bot de Análise de Despesas
+
+Breve: este repositório contém um bot Telegram que analisa comprovantes (texto ou imagem) e gera um JSON estruturado com o lançamento financeiro, salvando em um banco MongoDB.
+
+## Estrutura mínima
+- `main.py` — código principal do bot (handler de mensagens, integração com API de geração de conteúdo e MongoDB).
+
+## Requisitos (sistema)
+- Python 3.10+ recomendado
+- MongoDB (Atlas ou instância acessível)
+
+## Dependências Python recomendadas
+- python-dotenv
+- pymongo
+- python-telegram-bot
+- google-genai (ou pacote equivalente que você usa para a API Gemini)
+
+Sugestão: crie um virtualenv antes de instalar.
+
+## Instalação (PowerShell)
+Abra o PowerShell e execute (exemplo):
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install python-dotenv pymongo python-telegram-bot google-genai
+```
+
+Observação: ajuste o nome do pacote `google-genai` se você estiver usando outra biblioteca para a API da Google Gemini.
+
+## Variáveis de ambiente
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+
+```
+TELEGRAM_TOKEN=<seu_token_telegram>
+GEMINI_API_KEY=<sua_api_key_gemini>
+MONGO_URI=<sua_uri_mongo>
+```
+
+Exemplo rápido no PowerShell (temporário):
+
+```powershell
+$env:TELEGRAM_TOKEN='<token>';$env:GEMINI_API_KEY='<sua_api_key>';$env:MONGO_URI='<sua_mongo_uri>'
+```
+
+## Instalação do MongoDB e do driver pymongo (com suporte SRV)
+
+Recomendado: usar MongoDB Atlas (serviço gerenciado) ou uma instância local do MongoDB.
+
+- Se usar o Atlas, crie um cluster e gere a `MONGO_URI` no formato `mongodb+srv://<user>:<pass>@cluster0.abcd.mongodb.net/<db>?retryWrites=true&w=majority`.
+- Para que a string `mongodb+srv://` funcione, instale o driver com suporte a SRV (ele traz a dependência `dnspython` automaticamente):
+
+```powershell
+python -m pip install "pymongo[srv]"
+```
+
+Ou, no virtualenv já criado:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m pip install "pymongo[srv]"
+```
+
+Se preferir manter tudo em `requirements.txt`, você pode substituir a linha de `pymongo` por:
+
+```
+pymongo[srv]>=4.3.0
+```
+
+Notas:
+- Se usar Atlas, autorize seu IP (ou use 0.0.0.0/0 temporariamente durante desenvolvimento) no Network Access do Atlas.
+- Para desenvolvimento local, instale o MongoDB Community Server (https://www.mongodb.com/try/download/community) e use a URI `mongodb://localhost:27017`.
+
+
+## Como rodar
+Com o ambiente ativado e as variáveis configuradas:
+
+```powershell
+python main.py
+```
+
+O bot usa polling por padrão (ver `application.run_polling`).
+
+## Notas sobre alterações recentes
+- Removi linguagem ofensiva e tornei mensagens ao usuário mais neutras e profissionais no arquivo `main.py`.
+- Foram também normalizados alguns nomes de variáveis e campos do banco (ex.: `senha`, `telegram_id`, `valor`). Essas mudanças visam legibilidade e respeito.
+
+Se você depender de campos antigos no banco de dados, revise os documentos existentes e faça migração/renomeação conforme necessário.
+
+## Troubleshooting
+- Erros de importação? Instale as dependências conforme a seção de instalação.
+- Erro de conexão com o MongoDB? Verifique se `MONGO_URI` está correto e que seu IP/cluster permite conexões.
+
+## Próximos passos (opcionais)
+- Adicionar `requirements.txt` para travar dependências.
+- Adicionar instruções de deploy (Docker/Heroku/Azure).
+- Escrever testes unitários para os parseadores e fluxo de mensagens.
+
+---
+Se quiser que eu adicione o `requirements.txt` agora ou que eu gere um script de migração para atualizar documentos antigos do Mongo, me diga qual opção prefere.
 # FinChat — Bot Telegram com Gemini (Google GenAI)
 
 Um bot simples para Telegram que envia mensagens para o modelo Gemini (Google GenAI) e tenta extrair uma resposta JSON. O projeto está escrito em Python e usa as bibliotecas `python-telegram-bot` e `google-genai`.
